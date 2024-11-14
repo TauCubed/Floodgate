@@ -110,8 +110,14 @@ public class WhitelistCommand implements FloodgateCommand {
             return;
         }
 
-        if (name.startsWith(config.getUsernamePrefix())) {
-            name = name.substring(config.getUsernamePrefix().length());
+        if (config.isUsernamePrefixIsSuffix()) {
+            if (name.endsWith(config.getUsernamePrefix())) {
+                name = name.substring(0, name.length() - config.getUsernamePrefix().length());
+            }
+        } else {
+            if (name.startsWith(config.getUsernamePrefix())) {
+                name = name.substring(config.getUsernamePrefix().length());
+            }
         }
 
         if (name.isEmpty() || name.length() > 16) {
@@ -125,7 +131,7 @@ public class WhitelistCommand implements FloodgateCommand {
         if (config.isReplaceSpaces()) {
             tempName = tempName.replace(' ', '_');
         }
-        final String correctName = config.getUsernamePrefix() + tempName;
+        final String correctName = config.isUsernamePrefixIsSuffix() ? tempName + config.getUsernamePrefix() : config.getUsernamePrefix() + tempName;
         final String strippedName = name;
 
         // We need to get the UUID of the player if it's not manually specified
